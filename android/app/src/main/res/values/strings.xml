@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Glucose Tracker</string>
+    <string name="title_activity_main">Glucose Tracker</string>
+    <string name="package_name">com.glucosetracker.app</string>
+    <string name="custom_url_scheme">com.glucosetracker.app</string>
+    <string name="ionic_app_id">your_app_id_here</string>
+    <string name="ionic_channel_name">Production</string>
+    <string name="ionic_update_method">background</string>
+    <string name="ionic_max_versions">2</string>
+    <string name="ionic_min_background_duration">30</string>
+    <string name="ionic_update_api">https://api.ionicjs.com</string>
+    <string name="add_entry">Add New Entry</string>
+    <string name="view_records">View Records</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+</resources> 

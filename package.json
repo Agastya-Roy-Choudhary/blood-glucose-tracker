@@ -1,0 +1,50 @@
+{
+  "name": "glucotrack-app",
+  "version": "1.0.0",
+  "description": "Smart Diabetes Management Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder -mwl",
+    "build:windows": "electron-builder --windows",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:mobile": "capacitor build",
+    "build:ios": "capacitor build ios",
+    "build:android": "capacitor build android"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/cli": "^5.0.0",
+    "@capacitor/ios": "^5.0.0",
+    "@capacitor/android": "^5.0.0"
+  },
+  "build": {
+    "appId": "com.glucotrack.app",
+    "productName": "GlucoTrack",
+    "mac": {
+      "category": "public.app-category.healthcare-fitness",
+      "target": ["dmg", "zip"],
+      "darkModeSupport": true
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "linux": {
+      "target": ["AppImage", "deb", "rpm"],
+      "category": "Medical"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    }
+  }
+} 

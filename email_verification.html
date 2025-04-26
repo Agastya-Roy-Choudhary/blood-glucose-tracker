@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification - Blood Glucose Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-light: #f0f2f5;
+      --text-dark: #202124;
+      --text-light: #5f6368;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    [data-theme="dark"] {
+      --primary: #64b5f6;
+      --primary-dark: #42a5f5;
+      --bg-light: #1a1a1a;
+      --text-dark: #ffffff;
+      --text-light: #e0e0e0;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --bg-color: #121212;
+      --form-bg: #1e1e1e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--text-dark);
+    }
+
+    .dev-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #ff9800;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: 500;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: var(--form-bg);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: var(--shadow-md);
+      margin-top: 50px; /* Add space for the banner */
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: var(--text-light);
+    }
+
+    .verification-code {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .verification-code input {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 1.2em;
+      border: 1px solid var(--text-light);
+      border-radius: 8px;
+      background: var(--bg-light);
+      color: var(--text-dark);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .form-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .error-message {
+      color: #f44336;
+      margin-top: 5px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .success-message {
+      color: #4caf50;
+      margin-top: 5px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .timer {
+      text-align: center;
+      margin-top: 10px;
+      color: var(--text-light);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dev-banner">
+    🚧 This website is under development. Some features may not work correctly. 🚧
+  </div>
+
+  <a href="login.html" class="back-btn">Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+  <div class="container">
+    <div class="header">
+      <h1>Email Verification</h1>
+      <p>Enter the verification code sent to your email</p>
+    </div>
+
+    <form id="verification-form" onsubmit="handleVerification(event)">
+      <div class="verification-code">
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        <input type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+      </div>
+
+      <div id="verification-error" class="error-message">Invalid verification code</div>
+      <div id="verification-success" class="success-message">Email verified successfully!</div>
+
+      <button type="submit" class="btn btn-primary">Verify Email</button>
+    </form>
+
+    <div class="timer" id="timer">Resend code in <span id="countdown">60</span> seconds</div>
+
+    <div class="form-footer">
+      <a href="#" onclick="resendCode()" id="resend-link" style="display: none;">Resend verification code</a>
+    </div>
+  </div>
+
+  <script>
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.setAttribute('data-theme', savedTheme);
+      
+      // Check if verification code has been sent
+      const codeSent = localStorage.getItem('verificationCodeSent');
+      if (!codeSent) {
+        sendVerificationCode();
+      }
+      
+      // Start timer
+      startTimer();
+      
+      // Setup input handling
+      setupVerificationInputs();
+    });
+
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    function setupVerificationInputs() {
+      const inputs = document.querySelectorAll('.verification-code input');
+      
+      inputs.forEach((input, index) => {
+        // Handle input
+        input.addEventListener('input', function() {
+          if (this.value.length === 1) {
+            if (index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+          }
+        });
+        
+        // Handle backspace
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && !this.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+    }
+
+    function sendVerificationCode() {
+      // In a real application, this would send an email
+      // For this demo, we'll just generate a random code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      localStorage.setItem('verificationCode', code);
+      localStorage.setItem('verificationCodeSent', 'true');
+      localStorage.setItem('verificationCodeTimestamp', Date.now().toString());
+      
+      // Show success message (in a real app, this would be "Code sent to your email")
+      alert(`Verification code: ${code}`);
+    }
+
+    function startTimer() {
+      const timestamp = parseInt(localStorage.getItem('verificationCodeTimestamp'));
+      const now = Date.now();
+      const elapsed = Math.floor((now - timestamp) / 1000);
+      const remaining = Math.max(60 - elapsed, 0);
+      
+      const timerElement = document.getElementById('countdown');
+      const resendLink = document.getElementById('resend-link');
+      const timerDiv = document.getElementById('timer');
+      
+      if (remaining > 0) {
+        timerElement.textContent = remaining;
+        resendLink.style.display = 'none';
+        timerDiv.style.display = 'block';
+        
+        setTimeout(() => {
+          startTimer();
+        }, 1000);
+      } else {
+        timerDiv.style.display = 'none';
+        resendLink.style.display = 'block';
+      }
+    }
+
+    function resendCode() {
+      sendVerificationCode();
+      startTimer();
+    }
+
+    function handleVerification(event) {
+      event.preventDefault();
+      
+      const inputs = document.querySelectorAll('.verification-code input');
+      const enteredCode = Array.from(inputs).map(input => input.value).join('');
+      const correctCode = localStorage.getItem('verificationCode');
+      
+      const errorMessage = document.getElementById('verification-error');
+      const successMessage = document.getElementById('verification-success');
+      
+      if (enteredCode === correctCode) {
+        // Mark email as verified
+        localStorage.setItem('emailVerified', 'true');
+        
+        // Get stored login info
+        const email = localStorage.getItem('tempEmail');
+        const password = localStorage.getItem('tempPassword');
+        
+        // Mark as logged in
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', email);
+        
+        // Clear temporary storage
+        localStorage.removeItem('tempEmail');
+        localStorage.removeItem('tempPassword');
+        localStorage.removeItem('verificationCode');
+        localStorage.removeItem('verificationCodeSent');
+        localStorage.removeItem('verificationCodeTimestamp');
+        
+        // Show success message
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'block';
+        
+        // Redirect to welcome page after a short delay
+        setTimeout(() => {
+          window.location.href = 'welcome.html';
+        }, 1500);
+      } else {
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        
+        // Clear inputs
+        inputs.forEach(input => input.value = '');
+        inputs[0].focus();
+      }
+    }
+  </script>
+</body>
+</html> 
