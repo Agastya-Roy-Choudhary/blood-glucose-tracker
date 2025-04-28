@@ -172,14 +172,14 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
             padding: 2rem 0;
         }
 
         .feature-card {
             background: white;
-            padding: 2rem;
+            padding: 3rem;
             border-radius: 20px;
             box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
@@ -191,14 +191,15 @@
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
+            font-size: 40px;
             background: var(--bg-light);
-            border-radius: 15px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .feature-card h3 {
@@ -411,6 +412,7 @@
         .auth {
             padding: 4rem 2rem;
             background: white;
+            scroll-margin-top: 100px; /* This ensures the section isn't hidden behind the navbar */
         }
 
         .auth-container {
@@ -508,7 +510,13 @@
             color: var(--primary);
             text-decoration: none;
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
+    <!-- Add Google Sign-In script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="dev-banner">
@@ -519,8 +527,8 @@
         <div class="nav-content">
             <a href="index.html" class="logo">GlucoTrack</a>
             <div class="nav-links">
-                <a href="index.html">Track Glucose</a>
-                <a href="glucose_viewer.html">View Records</a>
+                <a href="#auth" class="nav-link" data-redirect="glucose_tracker.html">Track Glucose</a>
+                <a href="#auth" class="nav-link" data-redirect="glucose_viewer.html">View Records</a>
                 <a href="#features">Features</a>
                 <a href="#contact">Contact</a>
             </div>
@@ -532,8 +540,8 @@
             <h1>Smart Diabetes Management Made Simple</h1>
             <p>Track your glucose levels, insulin doses, and meals with our easy-to-use digital tracker. Take control of your health journey today.</p>
             <div class="cta-buttons">
-                <a href="index.html" class="btn btn-primary">Start Tracking Now</a>
-                <a href="glucose_viewer.html" class="btn btn-secondary">View Your Records</a>
+                <a href="#auth" class="btn btn-primary" data-redirect="glucose_tracker.html">Start Tracking Now</a>
+                <a href="#auth" class="btn btn-secondary" data-redirect="glucose_viewer.html">View Your Records</a>
             </div>
         </div>
     </section>
@@ -544,11 +552,6 @@
                 <div class="feature-icon">📊</div>
                 <h3>Easy Tracking</h3>
                 <p>Log your glucose levels, insulin doses, and meals with our intuitive interface.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📈</div>
-                <h3>Data Visualization</h3>
-                <p>View your health trends with clear, easy-to-understand charts and graphs.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔔</div>
@@ -581,10 +584,24 @@
                 <h2>Get Started</h2>
                 <p>Track your glucose levels for free</p>
                 <div class="auth-buttons">
-                    <button onclick="signInWithGoogle()" class="btn-google">
-                        <img src="https://www.google.com/favicon.ico" alt="Google" width="18" height="18">
-                        Continue with Google
-                    </button>
+                    <!-- Replace the old button with Google's sign-in button -->
+                    <div id="g_id_onload"
+                         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="handleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left">
+                    </div>
+
                     <div class="divider">
                         <span>or</span>
                     </div>
@@ -618,8 +635,29 @@
     </footer>
 
     <script>
-        function signInWithGoogle() {
-            alert('Google Sign-In will be implemented when the website is hosted');
+        function handleCredentialResponse(response) {
+            // Decode the credential response
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            // Save user info
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userName', responsePayload.name);
+            localStorage.setItem('userEmail', responsePayload.email);
+            localStorage.setItem('userPicture', responsePayload.picture);
+
+            // Redirect to the last attempted page or default to tracker
+            const redirectUrl = localStorage.getItem('lastAttemptedPage') || 'glucose_tracker.html';
+            localStorage.removeItem('lastAttemptedPage');
+            window.location.href = redirectUrl;
+        }
+
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
         }
 
         function showEmailForm() {
@@ -638,6 +676,27 @@
                 text.innerHTML = 'Already have an account? <a href="#" onclick="toggleForm()">Log in</a>';
             }
         }
+
+        // Update checkAuth to save the attempted page
+        function checkAuth(event) {
+            event.preventDefault();
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn) {
+                localStorage.setItem('lastAttemptedPage', event.target.getAttribute('data-redirect'));
+                document.getElementById('auth').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.location.href = event.target.getAttribute('data-redirect');
+            }
+        }
+
+        // Add event listeners when document loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to all auth-required links
+            const authLinks = document.querySelectorAll('[data-redirect]');
+            authLinks.forEach(link => {
+                link.addEventListener('click', checkAuth);
+            });
+        });
     </script>
 </body>
 </html> 
