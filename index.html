@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlucoLink - Smart Diabetes Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --secondary: #34a853;
+            --bg-light: #f8f9fa;
+            --text-dark: #202124;
+            --text-light: #5f6368;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        [data-theme="dark"] {
+            --primary: #64b5f6;
+            --primary-dark: #42a5f5;
+            --bg-light: #000000;
+            --text-dark: #ffffff;
+            --text-light: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(255,255,255,0.1);
+            --shadow-md: 0 4px 20px rgba(255,255,255,0.15);
+            --bg-color: #000000;
+            --form-bg: #1a1a1a;
+            --card-bg: #1a1a1a;
+            --header-bg: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
+        }
+
+        .dev-banner {
+            display: none; /* Hide the banner */
+        }
+
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            margin-top: 40px; /* Add space for the banner */
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .download-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .signin-btn {
+            background: white;
+            color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary);
+        }
+
+        .signin-btn:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        .signin-btn.highlight {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(26, 115, 232, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(26, 115, 232, 0);
+            }
+        }
+
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, var(--bg-light) 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            padding: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 40px;
+            background: var(--bg-light);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+        }
+
+        .stats {
+            padding: 4rem 2rem;
+            background: var(--bg-light);
+            text-align: center;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        footer {
+            background: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        .pricing {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .pricing-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        .pricing-header h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .pricing-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid var(--bg-light);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pricing-card.popular {
+            border: 2px solid var(--primary);
+            background: linear-gradient(to bottom, white, var(--bg-light));
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pricing-card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-card-header h3 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .period {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 0 0 2rem;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            color: var(--text-light);
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: var(--secondary);
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .pricing-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        .auth {
+            padding: 4rem 2rem;
+            background: white;
+            scroll-margin-top: 100px; /* This ensures the section isn't hidden behind the navbar */
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-box h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-box p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn-google, .btn-email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--bg-light);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            background: white;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google:hover, .btn-email:hover {
+            background: var(--bg-light);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .divider span {
+            padding: 0 10px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .email-form {
+            margin-top: 1rem;
+        }
+
+        .email-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .email-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--bg-light);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .login-text {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .login-text a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .home-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 10px 22px;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 1.1rem;
+            border: none;
+        }
+
+        .home-button:hover {
+            transform: translateY(-5px);
+            background: #f0f2f5;
+        }
+
+        .home-button img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            margin-right: 8px;
+        }
+
+        .add-entry-btn,
+        .delete-all-btn,
+        .export-btn,
+        .print-btn {
+            border-radius: 16px !important;
+        }
+
+        .table-container { padding: 2rem; background: var(--card-bg); border-radius: 12px; }
+        table th { position: sticky; top: 0; background: var(--header-bg); }
+    </style>
+    <meta name="google-signin-client_id" content="188965435290-c0bur3h8ld6aubobf8eo29abm84l33ed.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.ico" alt="GlucoLink Logo">
+                GlucoLink
+            </a>
+            <div class="nav-buttons">
+                <a href="login.html" class="signin-btn" id="signinBtn">Sign In</a>
+                <a href="download.html" class="download-btn">Download for Windows</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Smart Diabetes Management Made Simple</h1>
+            <p>Track your glucose levels, insulin doses, and meals with our easy-to-use digital tracker. Take control of your health journey today.</p>
+            <div class="cta-buttons">
+                <a href="glucose_tracker.html" class="btn btn-primary">Start Tracking Now</a>
+                <a href="glucose_viewer.html" class="btn btn-secondary">View Your Records</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Track Your Glucose</h3>
+                <p>Monitor your blood sugar levels with our intuitive tracking system. Get insights and trends to better manage your diabetes.</p>
+                <a href="login.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Start Tracking Now</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>View Your Records</h3>
+                <p>Access your complete health history anytime, anywhere. Share reports with your healthcare provider effortlessly.</p>
+                <a href="login.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">View Records</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Tracking Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Data Privacy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">Easy</div>
+                <div class="stat-label">To Use</div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="tel:+917304724706">Contact Support: +91 7304724706</a>
+            </div>
+            <p>&copy; 2024 GlucoLink. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <a href="index.html" class="home-button" title="Go to Home">
+        <img src="assets/logo.ico" alt="GlucoLink Home" style="height:28px; vertical-align:middle; margin-right:8px;">
+        <span style="vertical-align:middle; font-size:1.1rem; font-weight:500;">Home</span>
+    </a>
+
+    <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+    themeToggle.onclick = () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    };
+    setTheme(localStorage.getItem('theme') || 'light');
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // Check if we should highlight the sign-in button
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('highlight_signin')) {
+            const signinBtn = document.getElementById('signinBtn');
+            signinBtn.classList.add('highlight');
+        }
+    });
+    </script>
+</body>
+</html> 

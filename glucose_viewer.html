@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glucose Data Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .title {
+            margin: 0;
+            color: #1a73e8;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        select, input, button {
+            padding: 8px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #1557b0;
+        }
+        .action-btn {
+            padding: 8px 16px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin: 20px;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            min-width: 2500px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            min-width: 80px;
+            position: relative;
+        }
+        th {
+            background: var(--header-bg);
+            font-weight: 600;
+            color: #1a73e8;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+        }
+        tr:nth-child(1) th {
+            background: #1a73e8;
+            color: white;
+            font-weight: bold;
+            padding: 20px 15px;
+        }
+        tr:nth-child(2) th {
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 500;
+            padding: 15px;
+        }
+        td {
+            padding: 8px;
+            border: 1px solid #dadce0;
+            text-align: center;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        tr:hover {
+            background: #e8f0fe;
+        }
+        .export-btn {
+            background: #34a853;
+        }
+        .export-btn:hover {
+            background: #2d8745;
+        }
+        .print-btn {
+            background: #5f6368;
+        }
+        .print-btn:hover {
+            background: #494c50;
+        }
+        .add-entry-btn {
+            background: #1a73e8;
+        }
+        .add-entry-btn:hover {
+            background: #1557b0;
+        }
+        @media print {
+            .controls, .header button {
+                display: none;
+            }
+            .table-container {
+                box-shadow: none;
+            }
+            body {
+                padding: 0;
+            }
+        }
+        .search-box {
+            padding: 8px 12px;
+            width: 200px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .expandable-cell {
+            cursor: pointer;
+            position: relative;
+        }
+        .expandable-cell:hover::after {
+            content: '↕';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1a73e8;
+        }
+        .expanded-cell {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 80%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .expanded-cell textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        .expanded-cell-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .edit-btn {
+            padding: 4px 8px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        tr:hover .edit-btn {
+            opacity: 1;
+        }
+        .edit-btn:hover {
+            background: #1557b0;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .delete-all-btn {
+            background: #d93025;
+        }
+        
+        .delete-all-btn:hover {
+            background: #b31412;
+        }
+        
+        .verification-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1001;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: none; /* Hide by default */
+        }
+        
+        .verification-popup h3 {
+            margin-bottom: 20px;
+            color: #d93025;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .verification-popup p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #202124;
+            font-size: 1rem;
+        }
+        
+        .verification-code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #1a73e8;
+        }
+        
+        .verification-popup input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .verification-popup input:focus {
+            border-color: #1a73e8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+        }
+        
+        .verification-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .verification-buttons button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .verify-btn {
+            background: #d93025;
+            color: white;
+        }
+        
+        .verify-btn:hover {
+            background: #b31412;
+            transform: translateY(-1px);
+        }
+        
+        .cancel-btn {
+            background: #f1f3f4;
+            color: #5f6368;
+        }
+        
+        .cancel-btn:hover {
+            background: #e8eaed;
+            transform: translateY(-1px);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .home-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 10px 22px;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 1.1rem;
+            border: none;
+        }
+
+        .home-button:hover {
+            transform: translateY(-5px);
+            background: #f0f2f5;
+        }
+
+        .home-button img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            margin-right: 8px;
+        }
+
+        .add-entry-btn,
+        .delete-all-btn,
+        .export-btn,
+        .print-btn {
+            border-radius: 16px !important;
+        }
+
+        [data-theme="dark"] {
+            --primary: #64b5f6;
+            --primary-dark: #42a5f5;
+            --bg-light: #000000;
+            --text-dark: #ffffff;
+            --text-light: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(255,255,255,0.1);
+            --shadow-md: 0 4px 20px rgba(255,255,255,0.15);
+            --bg-color: #000000;
+            --form-bg: #1a1a1a;
+            --card-bg: #1a1a1a;
+            --header-bg: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo">
+            <img src="assets/logo.ico" alt="GlucoLink Logo" style="height:40px;">
+            GlucoLink
+        </a>
+        <h1 class="title">Glucose Data Viewer</h1>
+        <div class="header-buttons">
+        <button class="action-btn add-entry-btn" onclick="window.location.href='glucose_tracker.html'">Add New Entry</button>
+            <button class="action-btn delete-all-btn" onclick="confirmDeleteAll()">Delete All Data</button>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <input type="text" class="search-box" placeholder="Search..." oninput="filterTable()">
+            <select onchange="filterTable()" id="meal-filter">
+                <option value="">All Meal Types</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Mid Day Meal">Mid Day Meal</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Evening">Evening</option>
+                <option value="Dinner">Dinner</option>
+                <option value="3AM Reading">3AM Reading</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+        <div class="control-group date-filter">
+            <span>Date Range:</span>
+            <input type="date" id="start-date" onchange="filterTable()">
+            <span>to</span>
+            <input type="date" id="end-date" onchange="filterTable()">
+        </div>
+        <div class="control-group">
+            <button class="export-btn" onclick="exportToCSV()">Export to CSV</button>
+            <button class="print-btn" onclick="window.print()">Print View</button>
+        </div>
+    </div>
+
+    <div class="verification-popup" id="verificationPopup">
+        <div class="verification-content">
+            <h3>Verify You're Human</h3>
+            <p>Please enter the verification code to delete all data:</p>
+            <div class="verification-code" id="verificationCode"></div>
+            <input type="text" id="verificationInput" placeholder="Enter code">
+            <div class="verification-buttons">
+                <button onclick="verifyAndDelete()" class="verify-btn">Verify & Delete</button>
+                <button onclick="closeVerification()" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+        <table id="data-table">
+            <thead>
+                <tr>
+                        <th>Date</th>
+                        <th colspan="6">Breakfast</th>
+                        <th colspan="6">Mid Day Meal</th>
+                        <th colspan="6">Lunch</th>
+                        <th colspan="6">Evening Glucose Reading</th>
+                        <th colspan="6">Dinner</th>
+                        <th colspan="6">3AM Sugar Levels</th>
+                        <th colspan="6">Others</th>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <!-- Breakfast sub-columns -->
+                        <th>Fasting Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>2 hrs Post Breakfast Sugar</th>
+                        <!-- Mid Day Meal sub-columns -->
+                        <th>Fasting Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>2 hrs Post Meal Sugar</th>
+                        <!-- Lunch sub-columns -->
+                        <th>Pre-lunch Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>2 hrs Post Lunch Sugar</th>
+                        <!-- Evening sub-columns -->
+                        <th>Evening Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>2 hrs Post Evening Sugar</th>
+                        <!-- Dinner sub-columns -->
+                        <th>Pre-dinner Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>2 hrs Post Dinner Sugar</th>
+                        <!-- 3AM sub-columns -->
+                        <th>3AM Sugar</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>Notes</th>
+                        <!-- Others sub-columns -->
+                        <th>Time</th>
+                        <th>Type of Insulin</th>
+                        <th>Insulin Unit</th>
+                        <th>Meals with quantity</th>
+                        <th>Carb Count</th>
+                        <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <a href="index.html" class="home-button" title="Go to Home">
+        <img src="assets/logo.ico" alt="GlucoLink Home" style="height:28px; vertical-align:middle; margin-right:8px;">
+        <span style="vertical-align:middle; font-size:1.1rem; font-weight:500;">Home</span>
+    </a>
+
+    <script>
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            // Set default date range to last 30 days
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('end-date').valueAsDate = today;
+            document.getElementById('start-date').valueAsDate = thirtyDaysAgo;
+        });
+
+        function loadSavedData() {
+            const tableBody = document.getElementById('table-body');
+            const savedData = localStorage.getItem('glucoseData');
+            
+            if (savedData) {
+                try {
+                const data = JSON.parse(savedData);
+                    tableBody.innerHTML = ''; // Clear existing data
+                    
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="43">No data available. Add some entries using the tracker.</td></tr>';
+                        return;
+                    }
+                    
+                    // Sort data by date (newest first)
+                    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    data.forEach((rowData, rowIndex) => {
+                    const row = document.createElement('tr');
+                        
+                        // Add date cell
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = rowData.date || new Date().toLocaleDateString();
+                        dateCell.className = 'expandable-cell';
+                        dateCell.onclick = () => expandCell(dateCell, rowIndex);
+                        row.appendChild(dateCell);
+                        
+                        // Add cells for each meal type
+                        const mealTypes = ['breakfast', 'midDay', 'lunch', 'evening', 'dinner', 'threeAM', 'others'];
+                        mealTypes.forEach(mealType => {
+                            // Get the data for this meal type, or use empty array if not found
+                            const mealData = rowData[mealType] || Array(6).fill('');
+                            
+                            // Add 6 cells for each meal type
+                            for (let i = 0; i < 6; i++) {
+                        const cell = document.createElement('td');
+                                cell.textContent = mealData[i] || '';
+                                cell.className = 'expandable-cell';
+                                cell.onclick = () => expandCell(cell, rowIndex);
+                        row.appendChild(cell);
+                            }
+                    });
+                        
+                        // Add actions cell
+                        const actionsCell = document.createElement('td');
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'edit-btn';
+                        editBtn.textContent = 'Edit';
+                        editBtn.onclick = () => editRow(rowIndex);
+                        actionsCell.appendChild(editBtn);
+                        row.appendChild(actionsCell);
+                        
+                    tableBody.appendChild(row);
+                });
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    tableBody.innerHTML = '<tr><td colspan="43">Error loading data. Please try again.</td></tr>';
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="43">No data available. Add some entries using the tracker.</td></tr>';
+            }
+        }
+
+        function expandCell(cell, rowIndex) {
+            // Remove any existing expanded cells
+            const existingOverlay = document.querySelector('.overlay');
+            if (existingOverlay) existingOverlay.remove();
+            
+            const existingExpanded = document.querySelector('.expanded-cell');
+            if (existingExpanded) existingExpanded.remove();
+            
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+            
+            // Create expanded cell
+            const expandedCell = document.createElement('div');
+            expandedCell.className = 'expanded-cell';
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = cell.textContent;
+            expandedCell.appendChild(textarea);
+            
+            const buttons = document.createElement('div');
+            buttons.className = 'expanded-cell-buttons';
+            
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.onclick = () => {
+                cell.textContent = textarea.value;
+                saveData();
+                overlay.remove();
+                expandedCell.remove();
+            };
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.onclick = () => {
+                overlay.remove();
+                expandedCell.remove();
+            };
+            
+            buttons.appendChild(saveBtn);
+            buttons.appendChild(cancelBtn);
+            expandedCell.appendChild(buttons);
+            
+            document.body.appendChild(expandedCell);
+            
+            // Close on overlay click
+            overlay.onclick = () => {
+                overlay.remove();
+                expandedCell.remove();
+            };
+        }
+
+        function editRow(rowIndex) {
+            const row = document.getElementById('table-body').children[rowIndex];
+            const cells = row.getElementsByTagName('td');
+            
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+            
+            // Create edit form
+            const editForm = document.createElement('div');
+            editForm.className = 'expanded-cell';
+            
+            const form = document.createElement('form');
+            form.innerHTML = `
+                <h3>Edit Entry for ${cells[0].textContent}</h3>
+                <div style="display: grid; gap: 10px; margin-bottom: 20px;">
+                    ${Array.from(cells).map((cell, i) => `
+                        <div>
+                            <label>${getColumnName(i)}</label>
+                            <input type="text" value="${cell.textContent}" data-index="${i}">
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="expanded-cell-buttons">
+                    <button type="submit">Save Changes</button>
+                    <button type="button" onclick="this.closest('.overlay').remove()">Cancel</button>
+                </div>
+            `;
+            
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const inputs = form.getElementsByTagName('input');
+                Array.from(inputs).forEach(input => {
+                    const index = parseInt(input.dataset.index);
+                    cells[index].textContent = input.value;
+                });
+                saveData();
+                overlay.remove();
+            };
+            
+            editForm.appendChild(form);
+            document.body.appendChild(editForm);
+            
+            // Close on overlay click
+            overlay.onclick = () => {
+                overlay.remove();
+                editForm.remove();
+            };
+        }
+
+        function getColumnName(index) {
+            const headers = document.querySelectorAll('th');
+            return headers[index]?.textContent || `Column ${index + 1}`;
+        }
+
+        function saveData() {
+            const tableBody = document.getElementById('table-body');
+            const rows = tableBody.getElementsByTagName('tr');
+            const data = [];
+            
+            Array.from(rows).forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                const rowData = {
+                    date: cells[0].textContent,
+                    breakfast: Array.from(cells).slice(1, 7).map(cell => cell.textContent),
+                    midDay: Array.from(cells).slice(7, 13).map(cell => cell.textContent),
+                    lunch: Array.from(cells).slice(13, 19).map(cell => cell.textContent),
+                    evening: Array.from(cells).slice(19, 25).map(cell => cell.textContent),
+                    dinner: Array.from(cells).slice(25, 31).map(cell => cell.textContent),
+                    threeAM: Array.from(cells).slice(31, 37).map(cell => cell.textContent),
+                    others: Array.from(cells).slice(37, 43).map(cell => cell.textContent)
+                };
+                data.push(rowData);
+            });
+            
+            // Sort data by date (newest first)
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            localStorage.setItem('glucoseData', JSON.stringify(data));
+        }
+
+        function filterTable() {
+            const searchText = document.querySelector('.search-box').value.toLowerCase();
+            const mealType = document.getElementById('meal-filter').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const rows = document.getElementById('table-body').getElementsByTagName('tr');
+            for (let row of rows) {
+                let showRow = true;
+                const cells = row.getElementsByTagName('td');
+                // Text search
+                let textMatch = false;
+                for (let cell of cells) {
+                    if (cell.textContent.toLowerCase().includes(searchText)) {
+                        textMatch = true;
+                        break;
+                    }
+                }
+                showRow = showRow && (searchText === '' || textMatch);
+                // Meal type filter (checks if any cell in the row matches the meal type)
+                if (mealType && mealType !== '') {
+                    let mealMatch = false;
+                    for (let cell of cells) {
+                        if (cell.textContent === mealType) {
+                            mealMatch = true;
+                            break;
+                }
+                    }
+                    showRow = showRow && mealMatch;
+                }
+                // Date range filter
+                if (startDate && endDate && cells[0]) {
+                    const rowDate = new Date(cells[0].textContent);
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    showRow = showRow && rowDate >= start && rowDate <= end;
+                }
+                row.style.display = showRow ? '' : 'none';
+            }
+        }
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById('data-table');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = Array.from(tbody.getElementsByTagName('tr'));
+            
+            // Toggle sort direction
+            const ascending = table.getAttribute('data-sort-asc') === 'true';
+            table.setAttribute('data-sort-asc', (!ascending).toString());
+            
+            rows.sort((a, b) => {
+                const aValue = a.getElementsByTagName('td')[columnIndex].textContent;
+                const bValue = b.getElementsByTagName('td')[columnIndex].textContent;
+                
+                if (!isNaN(aValue) && !isNaN(bValue)) {
+                    return ascending ? aValue - bValue : bValue - aValue;
+                }
+                return ascending ? 
+                    aValue.localeCompare(bValue) : 
+                    bValue.localeCompare(aValue);
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function exportToCSV() {
+            const table = document.getElementById('data-table');
+            let csv = [];
+            
+            // Get headers
+            const headers = [];
+            const headerRows = table.getElementsByTagName('tr');
+            for (let i = 0; i < headerRows.length; i++) {
+                const headerCells = headerRows[i].getElementsByTagName('th');
+                const row = [];
+                for (let j = 0; j < headerCells.length; j++) {
+                    row.push(headerCells[j].innerText);
+                }
+                headers.push(row.join(','));
+            }
+            csv.push(headers.join('\n'));
+            
+            // Get data
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const row = [];
+                for (let j = 0; j < cells.length; j++) {
+                    row.push(cells[j].innerText);
+                }
+                csv.push(row.join(','));
+                }
+            
+            // Download CSV
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'glucose_data.csv';
+            link.click();
+        }
+
+        function confirmDeleteAll() {
+            const popup = document.getElementById('verificationPopup');
+            const code = generateVerificationCode();
+            document.getElementById('verificationCode').textContent = code;
+            document.getElementById('verificationInput').value = '';
+            popup.style.display = 'block';
+        }
+        
+        function closeVerification() {
+            document.getElementById('verificationPopup').style.display = 'none';
+        }
+        
+        function verifyAndDelete() {
+            const input = document.getElementById('verificationInput').value.toUpperCase();
+            const code = document.getElementById('verificationCode').textContent;
+            
+            if (input === code) {
+                localStorage.removeItem('glucoseData');
+                loadSavedData();
+                closeVerification();
+            } else {
+                alert('Incorrect verification code. Please try again.');
+            }
+        }
+
+        function generateVerificationCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        themeToggle.onclick = () => {
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        };
+        setTheme(localStorage.getItem('theme') || 'light');
+    </script>
+</body>
+</html> 

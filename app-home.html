@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlucoLink</title>
+    <style>
+        :root {
+            --primary: #2196F3;
+            --primary-dark: #1976D2;
+            --accent: #FF4081;
+            --bg-gradient: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #2C3E50;
+            --text-secondary: #546E7A;
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+        }
+
+        [data-theme="light"] {
+            --primary: #2196F3;
+            --primary-dark: #1976D2;
+            --accent: #FF4081;
+            --bg-gradient: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #2C3E50;
+            --text-secondary: #546E7A;
+        }
+
+        [data-theme="dark"] {
+            --primary: #64B5F6;
+            --primary-dark: #42A5F5;
+            --accent: #FF80AB;
+            --bg-gradient: linear-gradient(135deg, #1A237E 0%, #0D47A1 100%);
+            --card-bg: rgba(33, 33, 33, 0.95);
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0BEC5;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+        .header {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+        .home-btn {
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: auto;
+        }
+        .home-btn:hover {
+            background: #388e3c;
+        }
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem 0;
+        }
+        .action-card {
+            background: var(--card-bg);
+            border-radius: 50%;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            aspect-ratio: 1;
+            width: 250px;
+            height: 250px;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--primary);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        .action-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .footer {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .action-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="assets/logo.ico" alt="GlucoLink Logo" style="height:40px;">
+                <h1 class="app-title">GlucoLink</h1>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" aria-label="Toggle theme"><span id="theme-icon">🌙</span></button>
+                <button class="home-btn" title="Home" onclick="window.location.href='app-home.html'">
+                    &#127968;
+                </button>
+            </div>
+        </header>
+        <main class="main-content">
+            <a href="glucose_tracker.html" class="action-card">
+                <div class="action-icon">📝</div>
+                <h2 class="action-title">Fill an Entry</h2>
+                <p class="action-description">Record your glucose levels, meals, and insulin doses for better diabetes management.</p>
+            </a>
+            <a href="glucose_viewer.html" class="action-card">
+                <div class="action-icon">📊</div>
+                <h2 class="action-title">View Records</h2>
+                <p class="action-description">Analyze your historical data and track your progress over time.</p>
+            </a>
+        </main>
+        <footer class="footer">
+            <p>&copy; 2024 GlucoLink - Your Smart Diabetes Management Companion</p>
+        </footer>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        themeToggle.onclick = () => {
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        };
+        setTheme(localStorage.getItem('theme') || 'light');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,54 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.glucolink.app
+productName: GlucoLink
+mac:
+  category: public.app-category.healthcare-fitness
+  target:
+    - dmg
+    - zip
+  darkModeSupport: true
+win:
+  target:
+    - nsis
+  icon: ./assets/logo.ico
+  artifactName: GlucoLink-Setup-${version}.exe
+  publisherName: GlucoLink
+  verifyUpdateCodeSignature: false
+  requestedExecutionLevel: asInvoker
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: GlucoLink
+  installerIcon: ./assets/logo.ico
+  uninstallerIcon: ./assets/logo.ico
+  installerHeaderIcon: ./assets/logo.ico
+  menuCategory: true
+  perMachine: false
+linux:
+  target:
+    - AppImage
+    - deb
+    - rpm
+  category: Medical
+publish:
+  provider: github
+  releaseType: release
+files:
+  - filter:
+      - main.js
+      - index.html
+      - glucose_tracker.html
+      - glucose_viewer.html
+      - glucose_tracker.js
+      - glucose_viewer.js
+      - capacitor.config.json
+      - package.json
+      - build/**/*
+      - assets/**/*
+      - app-home.html
+extraFiles: []
+electronVersion: 28.3.3

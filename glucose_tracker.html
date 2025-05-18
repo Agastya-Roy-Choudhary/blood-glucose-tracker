@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Glucose Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-light: #f0f2f5;
+      --text-dark: #202124;
+      --text-light: #5f6368;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    /* Dark theme */
+    [data-theme="dark"] {
+      --primary: #64b5f6;
+      --primary-dark: #42a5f5;
+      --bg-light: #1a1a1a;
+      --text-dark: #ffffff;
+      --text-light: #ffffff;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --bg-color: #121212;
+      --form-bg: #1e1e1e;
+      --input-bg: #2d2d2d;
+      --input-border: #404040;
+      --input-text: #ffffff;
+      --label-text: #ffffff;
+      --placeholder-text: #a0a0a0;
+    }
+
+    [data-theme="dark"] body {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h2,
+    [data-theme="dark"] h3,
+    [data-theme="dark"] h4,
+    [data-theme="dark"] p,
+    [data-theme="dark"] label,
+    [data-theme="dark"] .subtitle {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .header h1,
+    [data-theme="dark"] .header .subtitle {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .header::after {
+      background: var(--primary);
+    }
+
+    [data-theme="dark"] input,
+    [data-theme="dark"] select,
+    [data-theme="dark"] textarea {
+      background-color: var(--input-bg);
+      border-color: var(--input-border);
+      color: var(--input-text);
+    }
+
+    [data-theme="dark"] input::placeholder,
+    [data-theme="dark"] textarea::placeholder {
+      color: var(--placeholder-text);
+    }
+
+    [data-theme="dark"] .form-section {
+      background: var(--form-bg);
+    }
+
+    [data-theme="dark"] .field-item {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] .field-item-title {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .field-preview {
+      background: var(--form-bg);
+    }
+
+    [data-theme="dark"] .form-preview {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] .field-type h4,
+    [data-theme="dark"] .field-type p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .field-type:hover h4,
+    [data-theme="dark"] .field-type:hover p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .form-builder-title,
+    [data-theme="dark"] .new-form-builder h3,
+    [data-theme="dark"] .form-preview h3 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .field-item-actions button {
+      background: var(--primary);
+      color: var(--text-dark);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    [data-theme="dark"] .field-item-actions button:hover {
+      background: var(--primary-dark);
+    }
+
+    [data-theme="dark"] .field-option input {
+      color: var(--input-text);
+    }
+
+    [data-theme="dark"] .preview-field label {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .form-selector label {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .field-type {
+      border-color: var(--primary);
+    }
+
+    [data-theme="dark"] .field-type:hover {
+      background: var(--primary);
+    }
+
+    [data-theme="dark"] .field-type:hover h4,
+    [data-theme="dark"] .field-type:hover p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .tabs button {
+      color: var(--text-dark);
+      background: var(--form-bg);
+    }
+
+    [data-theme="dark"] .tabs button:hover {
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .settings-content {
+      background: var(--form-bg);
+    }
+
+    [data-theme="dark"] .settings-content h2,
+    [data-theme="dark"] .settings-content h3 {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .theme-option {
+      color: var(--text-dark);
+      border-color: var(--primary);
+    }
+
+    [data-theme="dark"] .theme-option.active {
+      background: var(--primary);
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .form-option {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .form-option p {
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] .form-option.selected {
+      background: var(--primary);
+    }
+
+    [data-theme="dark"] .form-option.selected p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .close-settings {
+      color: var(--text-dark);
+    }
+
+    /* High contrast theme */
+    [data-theme="contrast"] {
+      --primary: #ff0000;
+      --primary-dark: #cc0000;
+      --bg-light: #ffffff;
+      --text-dark: #000000;
+      --text-light: #333333;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Settings button styles */
+    .settings-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      z-index: 1000;
+    }
+
+    .settings-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Settings modal styles */
+    .settings-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1001;
+    }
+
+    /* Fix scrolling issues */
+    .settings-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-builder {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    /* New form input styles */
+    .new-form-input {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--bg-light);
+      border-radius: 8px;
+    }
+
+    .new-form-input.active {
+      display: block;
+    }
+
+    .new-form-input input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .new-form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    [data-theme="dark"] .new-form-input {
+      background: var(--input-bg);
+    }
+
+    .settings-section {
+      margin-bottom: 30px;
+    }
+
+    .settings-section h3 {
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    .theme-options {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .theme-option {
+      padding: 10px 20px;
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .theme-option.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .form-customization {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .close-settings {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--primary);
+      margin: 20px auto;
+      border-radius: 2px;
+    }
+
+    h1 { 
+      font-size: 2.5em;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 1.1em;
+      margin-bottom: 30px;
+    }
+
+    .tabs { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 15px; 
+      margin-bottom: 30px; 
+      background: white;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tabs button { 
+      padding: 15px 30px; 
+      cursor: pointer; 
+      border-radius: 20px; 
+      border: 2px solid transparent; 
+      background: white;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tabs button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary);
+      opacity: 0.1;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .tabs button:hover::before {
+      transform: translateY(0);
+    }
+
+    .tabs button:hover { 
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .form-section { 
+      display: none; 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background: white; 
+      padding: 40px; 
+      border-radius: 25px; 
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary) 0%, #64b5f6 100%);
+    }
+
+    .form-section.active { 
+      display: block; 
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    .form-group { 
+      margin-bottom: 25px; 
+      position: relative;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label { 
+      display: block; 
+      margin-bottom: 10px;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    input, select { 
+      width: 100%; 
+      padding: 15px; 
+      border-radius: 15px; 
+      border: 2px solid #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+    }
+
+    input:focus, select:focus { 
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(26,115,232,0.15);
+    }
+
+    .submit-btn { 
+      width: 100%;
+      margin-top: 30px; 
+      padding: 18px; 
+      border-radius: 20px; 
+      border: none; 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+      color: white; 
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .submit-btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(26,115,232,0.4);
+    }
+
+    .view-records-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 40px auto;
+      padding: 18px 36px;
+      border-radius: 20px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      gap: 10px;
+    }
+
+    .view-records-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .view-records-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .confirm-popup {
+      position: fixed;
+      background: white;
+      border-radius: 25px;
+      box-shadow: var(--shadow-md);
+      padding: 30px;
+      text-align: center;
+      display: none;
+      z-index: 1000;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 320px;
+      backdrop-filter: blur(5px);
+    }
+
+    .confirm-popup p {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+    }
+
+    .confirm-popup button {
+      margin: 10px;
+      padding: 12px 24px;
+      border-radius: 15px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .confirm-popup button:first-of-type {
+      background: var(--primary);
+      color: white;
+    }
+
+    .confirm-popup button:last-of-type {
+      background: #f1f3f4;
+      color: var(--text-light);
+    }
+
+    .required::after {
+      content: " *";
+      color: #d93025;
+    }
+
+    .success-message {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4caf50;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 15px;
+      box-shadow: var(--shadow-md);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      .tabs {
+        padding: 15px;
+        gap: 10px;
+      }
+
+      .tabs button {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+
+      .form-section {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+
+    /* Add new styles for form customization */
+    .form-selector {
+      margin-bottom: 20px;
+    }
+
+    .form-selector select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--primary);
+      margin-top: 5px;
+    }
+
+    .form-fields {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .field-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: var(--bg-light);
+      border-radius: 8px;
+    }
+
+    .field-item input {
+      flex: 1;
+    }
+
+    .field-item select {
+      width: 120px;
+    }
+
+    .field-item button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      background: #dc3545;
+      color: white;
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .add-field-btn, .save-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .add-field-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .save-btn {
+      background: #28a745;
+      color: white;
+    }
+
+    /* Theme styles */
+    [data-theme="light"] {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-light: #f0f2f5;
+      --text-dark: #202124;
+      --text-light: #5f6368;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.15);
+      --bg-color: #ffffff;
+      --form-bg: #ffffff;
+    }
+
+    [data-theme="dark"] input,
+    [data-theme="dark"] select,
+    [data-theme="dark"] textarea {
+      background-color: var(--input-bg);
+      border-color: var(--input-border);
+      color: var(--input-text);
+    }
+
+    [data-theme="dark"] input::placeholder,
+    [data-theme="dark"] textarea::placeholder {
+      color: var(--placeholder-text);
+    }
+
+    [data-theme="dark"] label {
+      color: var(--label-text);
+    }
+
+    [data-theme="dark"] .field-item {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] .field-item-title {
+      color: var(--label-text);
+    }
+
+    [data-theme="dark"] .field-preview {
+      background: var(--form-bg);
+    }
+
+    [data-theme="dark"] .form-preview {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] .field-type h4,
+    [data-theme="dark"] .field-type p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .field-type:hover h4,
+    [data-theme="dark"] .field-type:hover p {
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .form-builder-title,
+    [data-theme="dark"] .new-form-builder h3,
+    [data-theme="dark"] .form-preview h3 {
+      color: var(--label-text);
+    }
+
+    [data-theme="dark"] .field-item-actions button {
+      background: var(--primary);
+      color: var(--text-dark);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    [data-theme="dark"] .field-item-actions button:hover {
+      background: var(--primary-dark);
+    }
+
+    [data-theme="dark"] .field-option input {
+      color: var(--input-text);
+    }
+
+    [data-theme="dark"] .preview-field label {
+      color: var(--label-text);
+    }
+
+    [data-theme="dark"] .form-selector label {
+      color: var(--label-text);
+    }
+
+    [data-theme="dark"] .field-type {
+      border-color: var(--primary);
+    }
+
+    [data-theme="dark"] .field-type:hover {
+      background: var(--primary);
+    }
+
+    [data-theme="dark"] .field-type:hover h4,
+    [data-theme="dark"] .field-type:hover p {
+      color: var(--text-dark);
+    }
+
+    /* Form customization options */
+    .form-options {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .form-option {
+      flex: 1;
+      padding: 20px;
+      border-radius: 15px;
+      background: var(--form-bg);
+      border: 2px solid var(--primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .form-option:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-option.selected {
+      background: var(--primary);
+      color: white;
+    }
+
+    .form-option h3 {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    .form-option p {
+      font-size: 0.9em;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .form-option.selected p {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Form customization styles */
+    .form-builder {
+      background: var(--form-bg);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .form-builder-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .form-builder-title {
+      font-size: 1.5em;
+      color: var(--text-dark);
+    }
+
+    .form-builder-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .field-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .field-type {
+      padding: 15px;
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .field-type:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .field-list {
+      margin-top: 20px;
+    }
+
+    .field-item {
+      background: var(--bg-light);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .field-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .field-item-title {
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .field-item-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .field-item-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field-preview {
+      padding: 10px;
+      background: var(--form-bg);
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .reset-forms-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .reset-forms-btn:hover {
+      background: #c82333;
+    }
+
+    .form-preview {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--bg-light);
+      border-radius: 10px;
+    }
+
+    .form-preview h3 {
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    /* New form builder styles */
+    .new-form-builder {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--form-bg);
+      border-radius: 15px;
+      border: 2px dashed var(--primary);
+    }
+
+    .new-form-builder h3 {
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    .new-form-inputs {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .new-form-inputs input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--input-text);
+    }
+
+    .create-form-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .create-form-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Add new styles for form management */
+    .form-management {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--form-bg);
+      border-radius: 15px;
+      border: 2px solid var(--primary);
+    }
+
+    .form-list {
+      margin-top: 15px;
+    }
+
+    .form-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: var(--bg-light);
+      border-radius: 8px;
+    }
+
+    .form-list-item button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .delete-form-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .edit-form-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .add-form-btn {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    [data-theme="dark"] .form-list-item {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] .form-list-item button {
+      color: var(--text-dark);
+    }
+
+    /* Table theme styles */
+    [data-theme="dark"] table {
+      background: var(--form-bg);
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] th {
+      background: var(--input-bg);
+      color: var(--text-dark);
+    }
+
+    [data-theme="dark"] td {
+      color: var(--text-dark);
+      border-color: var(--input-border);
+    }
+
+    [data-theme="dark"] tr:nth-child(even) {
+      background: var(--input-bg);
+    }
+
+    [data-theme="dark"] tr:hover {
+      background: var(--primary);
+      color: var(--text-dark);
+    }
+
+    /* Remove Data Visualization section */
+    .data-visualization {
+      display: none;
+    }
+
+    /* Update Easy Tracking section */
+    .easy-tracking {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .login-prompt {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--form-bg);
+      border-radius: 15px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .login-prompt.active {
+      display: block;
+    }
+
+    .google-login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .google-login-btn:hover {
+      background: #357abd;
+    }
+
+    [data-theme="dark"] .login-prompt {
+      background: var(--form-bg);
+      color: var(--text-dark);
+    }
+
+    /* Expand settings modal width and improve layout */
+    .settings-content {
+      width: 500px;
+      max-width: 95vw;
+    }
+
+    /* Add sun/moon toggle button to header */
+    <header>
+      <button id="theme-toggle" aria-label="Toggle theme"><span id="theme-icon">🌙</span></button>
+      <!-- rest of header -->
+    </header>
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="settings-btn" onclick="openSettings()">
+      <svg viewBox="0 0 24 24">
+        <path d="M19.14,12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36,2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74,8.87c-.12.21-.08.47.12.61l2.03,1.58c-.05.3-.07.62-.07.94c0,.32.02.64.07.94l-2.03,1.58c-.18.14-.23.41-.12.61l1.92,3.32c.12.22.37.29.59.22l2.39-.96c.5.38,1.03.7,1.62.94l.36,2.54c.05.24.24.41.48.41h3.84c.24 0,.44-.17.47-.41l.36-2.54c.59-.24,1.13-.56,1.62-.94l2.39.96c.22.08.47 0,.59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+      </svg>
+    </button>
+
+    <div id="settingsModal" class="settings-modal">
+      <div class="settings-content">
+        <button class="close-settings" onclick="closeSettings()">&times;</button>
+        <h2>Settings</h2>
+        
+        <div class="settings-section">
+          <h3>Theme</h3>
+          <div class="theme-options">
+            <div class="theme-option" onclick="setTheme('light')">Light</div>
+            <div class="theme-option" onclick="setTheme('dark')">Dark</div>
+            <div class="theme-option" onclick="setTheme('contrast')">High Contrast</div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Form Customization</h3>
+          <div class="form-customization">
+            <div class="form-options">
+              <div class="form-option" onclick="selectFormType('default')">
+                <h3>Default Forms</h3>
+                <p>Use the standard forms with predefined fields for each meal type. Perfect for regular tracking.</p>
+              </div>
+              <div class="form-option" onclick="selectFormType('custom')">
+                <h3>Customized Forms</h3>
+                <p>Create your own forms by adding, removing, or modifying fields to match your specific needs.</p>
+              </div>
+            </div>
+            
+            <div id="customFormFields" style="display: none;">
+              <div class="form-builder">
+                <div class="form-builder-header">
+                  <h2 class="form-builder-title">Form Builder</h2>
+                  <div class="form-builder-actions">
+                    <button onclick="resetToDefault()" class="reset-forms-btn">Reset to Default</button>
+                    <button onclick="saveFormCustomization()" class="save-btn">Save Changes</button>
+                  </div>
+                </div>
+
+                <div class="form-management">
+                  <h3>Manage Forms</h3>
+                  <div class="form-list" id="formList">
+                    <!-- Forms will be listed here -->
+                  </div>
+                  <button onclick="toggleNewFormInput()" class="add-form-btn">Add New Form</button>
+                  <div id="newFormInput" class="new-form-input">
+                    <input type="text" id="newFormName" placeholder="Enter form name">
+                    <div class="new-form-actions">
+                      <button onclick="cancelNewForm()" class="cancel-btn">Cancel</button>
+                      <button onclick="createNewFormFromInput()" class="create-btn">Create</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="new-form-builder">
+                  <h3>Create New Form</h3>
+                  <div class="new-form-inputs">
+                    <input type="text" id="newFormName" placeholder="Form Name (e.g., Weekly Checkup)">
+                    <input type="text" id="newFormDescription" placeholder="Form Description">
+                  </div>
+                  <button onclick="createNewForm()" class="create-form-btn">Create New Form</button>
+                </div>
+
+                <div class="form-selector">
+                  <label for="formTypeSelect">Select Form to Customize:</label>
+                  <select id="formTypeSelect" onchange="showFormCustomization()">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="middaymeal">Mid Day Meal</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="evening">Evening</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="night">3AM Sugar</option>
+                    <option value="others">Others</option>
+                  </select>
+                </div>
+
+                <div class="field-types">
+                  <div class="field-type" onclick="addField('text')">
+                    <h4>Short Answer</h4>
+                    <p>For text responses</p>
+                  </div>
+                  <div class="field-type" onclick="addField('number')">
+                    <h4>Number</h4>
+                    <p>For numerical values</p>
+                  </div>
+                  <div class="field-type" onclick="addField('date')">
+                    <h4>Date</h4>
+                    <p>For date selection</p>
+                  </div>
+                  <div class="field-type" onclick="addField('datetime-local')">
+                    <h4>Date & Time</h4>
+                    <p>For timestamp</p>
+                  </div>
+                  <div class="field-type" onclick="addField('select')">
+                    <h4>Dropdown</h4>
+                    <p>For multiple choice</p>
+                  </div>
+                </div>
+
+                <div id="formFields" class="field-list">
+                  <!-- Fields will be added here -->
+                </div>
+
+                <div class="form-preview">
+                  <h3>Form Preview</h3>
+                  <div id="formPreview">
+                    <!-- Preview will be shown here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="header">
+      <button id="theme-toggle" aria-label="Toggle theme"><span id="theme-icon">🌙</span></button>
+      <h1 style="text-align:center; font-size:2.5rem; font-weight:700; margin-top:2rem;">Fill an Entry</h1>
+      <p class="subtitle">Track your glucose levels, insulin doses, and meals with ease</p>
+    </header>
+
+    <div class="tabs">
+      <button onclick="showForm('breakfast')">Breakfast</button>
+      <button onclick="showForm('middaymeal')">Mid Day Meal</button>
+      <button onclick="showForm('lunch')">Lunch</button>
+      <button onclick="showForm('evening')">Evening</button>
+      <button onclick="showForm('dinner')">Dinner</button>
+      <button onclick="showForm('night')">3AM Sugar</button>
+      <button onclick="showForm('others')">Others</button>
+    </div>
+
+    <div id="forms-container">
+      <!-- Breakfast Form -->
+      <div id="breakfast" class="form-section">
+        <form onsubmit="handleSubmit(event, 'breakfast')">
+          <div class="form-group">
+            <label for="breakfast-date">Date</label>
+            <input type="date" id="breakfast-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-fasting">Fasting sugar</label>
+            <input type="number" id="breakfast-fasting" name="breakfast_sugar" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-insulin-type">Type of Insulin</label>
+            <select id="breakfast-insulin-type" name="breakfast_insulin_type" required>
+              <option value="">Select Type</option>
+              <option value="Short acting">Short acting</option>
+              <option value="Rapid acting">Rapid acting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-insulin-units">Insulin unit</label>
+            <input type="number" id="breakfast-insulin-units" name="breakfast_insulin_unit" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-meals">Meals with quantity</label>
+            <input type="text" id="breakfast-meals" name="breakfast_meals" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-carbs">Carb Count</label>
+            <input type="number" id="breakfast-carbs" name="breakfast_carbs" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="breakfast-post">2 hrs Post Breakfast Sugar</label>
+            <input type="number" id="breakfast-post" name="breakfast_post_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Mid Day Meal Form -->
+      <div id="middaymeal" class="form-section">
+        <form onsubmit="handleSubmit(event, 'middaymeal')">
+          <div class="form-group">
+            <label for="middaymeal-date">Date</label>
+            <input type="date" id="middaymeal-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-pre">Pre Mid Day Meal sugar readings</label>
+            <input type="number" id="middaymeal-pre" name="midday_sugar" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-insulin-type">Type of Insulin</label>
+            <select id="middaymeal-insulin-type" name="midday_insulin_type" required>
+              <option value="">Select Type</option>
+              <option value="Short acting">Short acting</option>
+              <option value="Rapid acting">Rapid acting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-insulin-units">Insulin unit</label>
+            <input type="number" id="middaymeal-insulin-units" name="midday_insulin_unit" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-meals">Meals with quantity</label>
+            <input type="text" id="middaymeal-meals" name="midday_meals" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-carbs">Carb Count</label>
+            <input type="number" id="middaymeal-carbs" name="midday_carbs" required>
+          </div>
+          <div class="form-group">
+            <label class="required" for="middaymeal-post">2 hrs Post Meal Sugar</label>
+            <input type="number" id="middaymeal-post" name="midday_post_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Lunch Form -->
+      <div id="lunch" class="form-section">
+        <form onsubmit="handleSubmit(event, 'lunch')">
+          <div class="form-group">
+            <label for="lunch-date">Date:</label>
+            <input type="date" id="lunch-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="lunch-fasting">Pre-lunch Sugar:</label>
+            <input type="number" id="lunch-fasting" name="lunch_sugar" required>
+          </div>
+          <div class="form-group">
+            <label for="lunch-insulin-type">Type of Insulin:</label>
+            <select id="lunch-insulin-type" name="lunch_insulin_type" required>
+              <option value="">Select Type</option>
+              <option value="Rapid Acting">Rapid Acting</option>
+              <option value="Long Acting">Long Acting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="lunch-insulin-units">Insulin Units:</label>
+            <input type="number" id="lunch-insulin-units" name="lunch_insulin_unit" required>
+          </div>
+          <div class="form-group">
+            <label for="lunch-meals">Meals with Quantity:</label>
+            <input type="text" id="lunch-meals" name="lunch_meals" required>
+          </div>
+          <div class="form-group">
+            <label for="lunch-carbs">Carb Count:</label>
+            <input type="number" id="lunch-carbs" name="lunch_carbs" required>
+          </div>
+          <div class="form-group">
+            <label for="lunch-post">2 Hr Post Lunch Sugar:</label>
+            <input type="number" id="lunch-post" name="lunch_post_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Evening Form -->
+      <div id="evening" class="form-section">
+        <form onsubmit="handleSubmit(event, 'evening')">
+          <div class="form-group">
+            <label for="evening-date">Date:</label>
+            <input type="date" id="evening-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="evening-fasting">Evening Sugar:</label>
+            <input type="number" id="evening-fasting" name="evening_sugar" required>
+          </div>
+          <div class="form-group">
+            <label for="evening-insulin-type">Type of Insulin:</label>
+            <select id="evening-insulin-type" name="evening_insulin_type" required>
+              <option value="">Select Type</option>
+              <option value="Rapid Acting">Rapid Acting</option>
+              <option value="Long Acting">Long Acting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="evening-insulin-units">Insulin Units:</label>
+            <input type="number" id="evening-insulin-units" name="evening_insulin_unit" required>
+          </div>
+          <div class="form-group">
+            <label for="evening-meals">Meals with Quantity:</label>
+            <input type="text" id="evening-meals" name="evening_meals" required>
+          </div>
+          <div class="form-group">
+            <label for="evening-carbs">Carb Count:</label>
+            <input type="number" id="evening-carbs" name="evening_carbs" required>
+          </div>
+          <div class="form-group">
+            <label for="evening-post">2 Hr Post Evening Sugar:</label>
+            <input type="number" id="evening-post" name="evening_post_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Dinner Form -->
+      <div id="dinner" class="form-section">
+        <form onsubmit="handleSubmit(event, 'dinner')">
+          <div class="form-group">
+            <label for="dinner-date">Date:</label>
+            <input type="date" id="dinner-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="dinner-fasting">Pre-dinner Sugar:</label>
+            <input type="number" id="dinner-fasting" name="dinner_sugar" required>
+          </div>
+          <div class="form-group">
+            <label for="dinner-insulin-type">Type of Insulin:</label>
+            <select id="dinner-insulin-type" name="dinner_insulin_type" required>
+              <option value="">Select Type</option>
+              <option value="Rapid Acting">Rapid Acting</option>
+              <option value="Long Acting">Long Acting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="dinner-insulin-units">Insulin Units:</label>
+            <input type="number" id="dinner-insulin-units" name="dinner_insulin_unit" required>
+          </div>
+          <div class="form-group">
+            <label for="dinner-meals">Meals with quantity:</label>
+            <input type="text" id="dinner-meals" name="dinner_meals" required>
+          </div>
+          <div class="form-group">
+            <label for="dinner-carbs">Carb Count:</label>
+            <input type="number" id="dinner-carbs" name="dinner_carbs" required>
+          </div>
+          <div class="form-group">
+            <label for="dinner-post">2 Hr Post Dinner Sugar:</label>
+            <input type="number" id="dinner-post" name="dinner_post_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Night (3AM) Form -->
+      <div id="night" class="form-section">
+        <form onsubmit="handleSubmit(event, 'night')">
+          <div class="form-group">
+            <label for="night-date">Date:</label>
+            <input type="date" id="night-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="night-reading">Sugar levels at 3 am:</label>
+            <input type="number" id="night-reading" name="threeam_sugar" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+      <!-- Others Form -->
+      <div id="others" class="form-section">
+        <form onsubmit="handleSubmit(event, 'others')">
+          <div class="form-group">
+            <label for="others-timestamp">Timestamp</label>
+            <input type="datetime-local" id="others-timestamp" name="others_timestamp" required>
+          </div>
+          <div class="form-group">
+            <label for="others-sugar">Pre School break sugar readings</label>
+            <input type="number" id="others-sugar" name="others_sugar" required>
+          </div>
+          <div class="form-group">
+            <label for="others-remarks">Remarks/Corrections (if any)</label>
+            <input type="text" id="others-remarks" name="others_remarks">
+          </div>
+          <div class="form-group">
+            <label for="others-total-bolus">Total Bolus for the day</label>
+            <input type="number" id="others-total-bolus" name="others_total_bolus">
+          </div>
+          <div class="form-group">
+            <label for="others-total-basals">Total Basals</label>
+            <input type="number" id="others-total-basals" name="others_total_basals">
+          </div>
+          <div class="form-group">
+            <label for="others-total-dose">Total Daily Dose</label>
+            <input type="number" id="others-total-dose" name="others_total_dose">
+          </div>
+          <div class="form-group">
+            <label for="others-weight">Weight (check every 15 days)</label>
+            <input type="number" id="others-weight" name="others_weight">
+          </div>
+          <div class="form-group">
+            <label for="others-height">Height (check every 15 days)</label>
+            <input type="number" id="others-height" name="others_height">
+          </div>
+          <div class="form-group">
+            <label for="others-date">Date</label>
+            <input type="date" id="others-date" name="date" required>
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="glucose_viewer.html" class="view-records-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+          <path d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z"/>
+        </svg>
+        View All Records
+      </a>
+    </div>
+
+    <div id="confirmBox" class="confirm-popup">
+      <p>Are you sure you want to delete this entry?</p>
+      <button onclick="confirmDelete(true)">Yes, Delete</button>
+      <button onclick="confirmDelete(false)">Cancel</button>
+    </div>
+
+    <div id="successMessage" class="success-message">
+      Entry saved successfully!
+    </div>
+  </div>
+
+  <div class="easy-tracking">
+    <h2>Easy Tracking</h2>
+    <p>Quick access to your daily glucose tracking needs</p>
+    <div class="login-prompt" id="loginPrompt">
+      <p>Please login with Google to access tracking features</p>
+      <button class="google-login-btn" onclick="handleGoogleLogin()">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+        </svg>
+        Login with Google
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function showForm(id) {
+      document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+      const formElement = document.getElementById(id);
+      if (formElement) formElement.classList.add('active');
+    }
+
+    let deleteTargetRow = null;
+
+    function confirmDeletePopup(row) {
+      deleteTargetRow = row;
+      document.getElementById('confirmBox').style.display = 'block';
+    }
+
+    function confirmDelete(confirm) {
+      const popup = document.getElementById('confirmBox');
+      popup.style.display = 'none';
+      if (confirm && deleteTargetRow) {
+        deleteTargetRow.remove();
+        saveData();
+        deleteTargetRow = null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+
+      // Load form type
+      const savedFormType = localStorage.getItem('formType') || 'default';
+      const customFields = document.getElementById('customFormFields');
+      customFields.style.display = savedFormType === 'custom' ? 'block' : 'none';
+      
+      // Set selected form option
+      document.querySelectorAll('.form-option').forEach(option => {
+        if (option.querySelector('h3').textContent.toLowerCase().includes(savedFormType)) {
+          option.classList.add('selected');
+        }
+      });
+
+      // Set default date to today for all date inputs
+      const today = new Date().toISOString().split('T')[0];
+      document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.value = today;
+      });
+      
+      // Show breakfast form by default
+      showForm('breakfast');
+
+      // Load custom forms
+      updateFormSelector();
+
+      // Initialize form list
+      updateFormList();
+    });
+
+    function showSuccessMessage() {
+      const message = document.getElementById('successMessage');
+      message.style.display = 'block';
+      setTimeout(() => {
+        message.style.display = 'none';
+      }, 3000);
+    }
+
+    function handleSubmit(event, formType) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const formData = new FormData(form);
+      const entryDate = formData.get('date') || new Date().toLocaleDateString();
+      
+      // Get existing data
+      let savedData = localStorage.getItem('glucoseData');
+      let data = savedData ? JSON.parse(savedData) : [];
+      
+      // Check if an entry for this date already exists
+      const existingEntryIndex = data.findIndex(entry => entry.date === entryDate);
+      
+      if (existingEntryIndex !== -1) {
+        // Update the existing entry
+        const existingEntry = data[existingEntryIndex];
+        
+        // Create updated entry
+        const updatedEntry = {
+          date: entryDate,
+          breakfast: formType === 'breakfast' ? [
+            formData.get('breakfast_sugar') || '',
+            formData.get('breakfast_insulin_type') || '',
+            formData.get('breakfast_insulin_unit') || '',
+            formData.get('breakfast_meals') || '',
+            formData.get('breakfast_carbs') || '',
+            formData.get('breakfast_post_sugar') || ''
+          ] : existingEntry.breakfast,
+          midDay: formType === 'middaymeal' ? [
+            formData.get('midday_sugar') || '',
+            formData.get('midday_insulin_type') || '',
+            formData.get('midday_insulin_unit') || '',
+            formData.get('midday_meals') || '',
+            formData.get('midday_carbs') || '',
+            formData.get('midday_post_sugar') || ''
+          ] : existingEntry.midDay,
+          lunch: formType === 'lunch' ? [
+            formData.get('lunch_sugar') || '',
+            formData.get('lunch_insulin_type') || '',
+            formData.get('lunch_insulin_unit') || '',
+            formData.get('lunch_meals') || '',
+            formData.get('lunch_carbs') || '',
+            formData.get('lunch_post_sugar') || ''
+          ] : existingEntry.lunch,
+          evening: formType === 'evening' ? [
+            formData.get('evening_sugar') || '',
+            formData.get('evening_insulin_type') || '',
+            formData.get('evening_insulin_unit') || '',
+            formData.get('evening_meals') || '',
+            formData.get('evening_carbs') || '',
+            formData.get('evening_post_sugar') || ''
+          ] : existingEntry.evening,
+          dinner: formType === 'dinner' ? [
+            formData.get('dinner_sugar') || '',
+            formData.get('dinner_insulin_type') || '',
+            formData.get('dinner_insulin_unit') || '',
+            formData.get('dinner_meals') || '',
+            formData.get('dinner_carbs') || '',
+            formData.get('dinner_post_sugar') || ''
+          ] : existingEntry.dinner,
+          threeAM: formType === 'night' ? [
+            formData.get('threeam_sugar') || ''
+          ] : existingEntry.threeAM,
+          others: formType === 'others' ? [
+            formData.get('others_timestamp') || '',
+            formData.get('others_sugar') || '',
+            formData.get('others_remarks') || '',
+            formData.get('others_total_bolus') || '',
+            formData.get('others_total_basals') || '',
+            formData.get('others_total_dose') || '',
+            formData.get('others_weight') || '',
+            formData.get('others_height') || '',
+            formData.get('date') || ''
+          ] : existingEntry.others
+        };
+        
+        // Replace the existing entry with the updated one
+        data[existingEntryIndex] = updatedEntry;
+      } else {
+        // Create new entry for this date
+        const newEntry = {
+          date: entryDate,
+          breakfast: formType === 'breakfast' ? [
+            formData.get('breakfast_sugar') || '',
+            formData.get('breakfast_insulin_type') || '',
+            formData.get('breakfast_insulin_unit') || '',
+            formData.get('breakfast_meals') || '',
+            formData.get('breakfast_carbs') || '',
+            formData.get('breakfast_post_sugar') || ''
+          ] : Array(6).fill(''),
+          midDay: formType === 'middaymeal' ? [
+            formData.get('midday_sugar') || '',
+            formData.get('midday_insulin_type') || '',
+            formData.get('midday_insulin_unit') || '',
+            formData.get('midday_meals') || '',
+            formData.get('midday_carbs') || '',
+            formData.get('midday_post_sugar') || ''
+          ] : Array(6).fill(''),
+          lunch: formType === 'lunch' ? [
+            formData.get('lunch_sugar') || '',
+            formData.get('lunch_insulin_type') || '',
+            formData.get('lunch_insulin_unit') || '',
+            formData.get('lunch_meals') || '',
+            formData.get('lunch_carbs') || '',
+            formData.get('lunch_post_sugar') || ''
+          ] : Array(6).fill(''),
+          evening: formType === 'evening' ? [
+            formData.get('evening_sugar') || '',
+            formData.get('evening_insulin_type') || '',
+            formData.get('evening_insulin_unit') || '',
+            formData.get('evening_meals') || '',
+            formData.get('evening_carbs') || '',
+            formData.get('evening_post_sugar') || ''
+          ] : Array(6).fill(''),
+          dinner: formType === 'dinner' ? [
+            formData.get('dinner_sugar') || '',
+            formData.get('dinner_insulin_type') || '',
+            formData.get('dinner_insulin_unit') || '',
+            formData.get('dinner_meals') || '',
+            formData.get('dinner_carbs') || '',
+            formData.get('dinner_post_sugar') || ''
+          ] : Array(6).fill(''),
+          threeAM: formType === 'night' ? [
+            formData.get('threeam_sugar') || ''
+          ] : Array(1).fill(''),
+          others: formType === 'others' ? [
+            formData.get('others_timestamp') || '',
+            formData.get('others_sugar') || '',
+            formData.get('others_remarks') || '',
+            formData.get('others_total_bolus') || '',
+            formData.get('others_total_basals') || '',
+            formData.get('others_total_dose') || '',
+            formData.get('others_weight') || '',
+            formData.get('others_height') || '',
+            formData.get('date') || ''
+          ] : Array(9).fill('')
+        };
+      
+      // Add new entry to data array
+      data.push(newEntry);
+      }
+      
+      // Sort data by date (newest first)
+      data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // Save back to localStorage
+      localStorage.setItem('glucoseData', JSON.stringify(data));
+      
+      // Redirect to viewer
+      window.location.href = 'glucose_viewer.html';
+    }
+
+    function saveData() {
+      const tableBody = document.getElementById('table-body');
+      const data = [];
+      
+      tableBody.querySelectorAll('tr').forEach(row => {
+        const rowData = [];
+        row.querySelectorAll('td').forEach(cell => {
+          rowData.push(cell.innerText);
+        });
+        data.push(rowData);
+      });
+      
+      localStorage.setItem('glucoseData', JSON.stringify(data));
+    }
+
+    function loadSavedData() {
+      const tableBody = document.getElementById('table-body');
+      const savedData = localStorage.getItem('glucoseData');
+      
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        data.forEach(rowData => {
+          const row = document.createElement('tr');
+          rowData.forEach((cellData, index) => {
+            if (index === rowData.length - 1) {
+              row.innerHTML += `<td><button class="delete-btn" onclick="confirmDeletePopup(this.closest('tr'))">X</button></td>`;
+            } else {
+              row.innerHTML += `<td>${cellData}</td>`;
+            }
+          });
+          tableBody.appendChild(row);
+        });
+      }
+    }
+
+    // Add new settings functions
+    function openSettings() {
+      document.getElementById('settingsModal').style.display = 'block';
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      
+      // Update active theme button
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.textContent.toLowerCase() === theme) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // Save form type preference
+    document.querySelectorAll('input[name="formType"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        localStorage.setItem('formType', this.value);
+      });
+    });
+
+    // Add new form customization functions
+    const defaultFormFields = {
+      breakfast: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Fasting sugar', type: 'number', required: true },
+        { label: 'Type of Insulin', type: 'select', options: ['Short acting', 'Rapid acting'], required: true },
+        { label: 'Insulin unit', type: 'number', required: true },
+        { label: 'Meals with quantity', type: 'text', required: true },
+        { label: 'Carb Count', type: 'number', required: true },
+        { label: '2 hrs Post Breakfast Sugar', type: 'number', required: true }
+      ],
+      middaymeal: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Pre Mid Day Meal sugar readings', type: 'number', required: true },
+        { label: 'Type of Insulin', type: 'select', options: ['Short acting', 'Rapid acting'], required: true },
+        { label: 'Insulin unit', type: 'number', required: true },
+        { label: 'Meals with quantity', type: 'text', required: true },
+        { label: 'Carb Count', type: 'number', required: true },
+        { label: '2 hrs Post Meal Sugar', type: 'number', required: true }
+      ],
+      lunch: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Pre-lunch Sugar', type: 'number', required: true },
+        { label: 'Type of Insulin', type: 'select', options: ['Short acting', 'Rapid acting'], required: true },
+        { label: 'Insulin unit', type: 'number', required: true },
+        { label: 'Meals with quantity', type: 'text', required: true },
+        { label: 'Carb Count', type: 'number', required: true },
+        { label: '2 Hr Post Lunch Sugar', type: 'number', required: true }
+      ],
+      evening: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Evening Sugar', type: 'number', required: true },
+        { label: 'Type of Insulin', type: 'select', options: ['Short acting', 'Rapid acting'], required: true },
+        { label: 'Insulin unit', type: 'number', required: true },
+        { label: 'Meals with quantity', type: 'text', required: true },
+        { label: 'Carb Count', type: 'number', required: true },
+        { label: '2 Hr Post Evening Sugar', type: 'number', required: true }
+      ],
+      dinner: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Pre-dinner Sugar', type: 'number', required: true },
+        { label: 'Type of Insulin', type: 'select', options: ['Short acting', 'Rapid acting'], required: true },
+        { label: 'Insulin unit', type: 'number', required: true },
+        { label: 'Meals with quantity', type: 'text', required: true },
+        { label: 'Carb Count', type: 'number', required: true },
+        { label: '2 Hr Post Dinner Sugar', type: 'number', required: true }
+      ],
+      night: [
+        { label: 'Date', type: 'date', required: true },
+        { label: 'Sugar levels at 3 am', type: 'number', required: true }
+      ],
+      others: [
+        { label: 'Timestamp', type: 'datetime-local', required: true },
+        { label: 'Pre School break sugar readings', type: 'number', required: true },
+        { label: 'Remarks/Corrections (if any)', type: 'text' },
+        { label: 'Total Bolus for the day', type: 'number' },
+        { label: 'Total Basals', type: 'number' },
+        { label: 'Total Daily Dose', type: 'number' },
+        { label: 'Weight (check every 15 days)', type: 'number' },
+        { label: 'Height (check every 15 days)', type: 'number' },
+        { label: 'Date', type: 'date', required: true }
+      ]
+    };
+
+    function addField(type) {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`)) || defaultFormFields[formType];
+      
+      const newField = {
+        label: 'New Field',
+        type: type,
+        required: false,
+        options: type === 'select' ? ['Option 1', 'Option 2'] : []
+      };
+      
+      fields.push(newField);
+      localStorage.setItem(`formFields_${formType}`, JSON.stringify(fields));
+      showFormCustomization();
+      updateFormPreview();
+    }
+
+    function showFormCustomization() {
+      const formType = document.getElementById('formTypeSelect').value;
+      const formFields = document.getElementById('formFields');
+      
+      let fields;
+      if (formType.startsWith('custom_')) {
+        const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+        const customForm = customForms.find(f => f.id === formType);
+        fields = customForm ? customForm.fields : [];
+      } else {
+        fields = JSON.parse(localStorage.getItem(`formFields_${formType}`)) || defaultFormFields[formType];
+      }
+      
+      formFields.innerHTML = fields.map((field, index) => `
+        <div class="field-item">
+          <div class="field-item-header">
+            <div class="field-item-title">${field.label}</div>
+            <div class="field-item-actions">
+              <button onclick="moveField(${index}, -1)">↑</button>
+              <button onclick="moveField(${index}, 1)">↓</button>
+              <button onclick="removeField(${index})">×</button>
+            </div>
+          </div>
+          <div class="field-item-content">
+            <input type="text" value="${field.label}" placeholder="Field Label" onchange="updateFieldLabel(${index}, this.value)">
+            <select onchange="updateFieldType(${index}, this.value)">
+              <option value="text" ${field.type === 'text' ? 'selected' : ''}>Short Answer</option>
+              <option value="number" ${field.type === 'number' ? 'selected' : ''}>Number</option>
+              <option value="date" ${field.type === 'date' ? 'selected' : ''}>Date</option>
+              <option value="datetime-local" ${field.type === 'datetime-local' ? 'selected' : ''}>Date & Time</option>
+              <option value="select" ${field.type === 'select' ? 'selected' : ''}>Dropdown</option>
+            </select>
+            <label>
+              <input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateFieldRequired(${index}, this.checked)">
+              Required
+            </label>
+            ${field.type === 'select' ? `
+              <div class="field-options">
+                ${field.options.map((option, optIndex) => `
+                  <div class="field-option">
+                    <input type="text" value="${option}" onchange="updateFieldOption(${index}, ${optIndex}, this.value)">
+                    <button onclick="removeFieldOption(${index}, ${optIndex})">×</button>
+                  </div>
+                `).join('')}
+                <button onclick="addFieldOption(${index})">Add Option</button>
+              </div>
+            ` : ''}
+          </div>
+          <div class="field-preview">
+            ${getFieldPreview(field)}
+          </div>
+        </div>
+      `).join('');
+      
+      updateFormPreview();
+    }
+
+    function getFieldPreview(field) {
+      switch(field.type) {
+        case 'text':
+          return `<input type="text" placeholder="${field.label}" ${field.required ? 'required' : ''}>`;
+        case 'number':
+          return `<input type="number" placeholder="${field.label}" ${field.required ? 'required' : ''}>`;
+        case 'date':
+          return `<input type="date" ${field.required ? 'required' : ''}>`;
+        case 'datetime-local':
+          return `<input type="datetime-local" ${field.required ? 'required' : ''}>`;
+        case 'select':
+          return `
+            <select ${field.required ? 'required' : ''}>
+              <option value="">${field.label}</option>
+              ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+            </select>
+          `;
+        default:
+          return '';
+      }
+    }
+
+    function updateFormPreview() {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`)) || defaultFormFields[formType];
+      const preview = document.getElementById('formPreview');
+      
+      preview.innerHTML = `
+        <form class="preview-form">
+          ${fields.map(field => `
+            <div class="preview-field">
+              <label>${field.label}${field.required ? ' *' : ''}</label>
+              ${getFieldPreview(field)}
+            </div>
+          `).join('')}
+        </form>
+      `;
+    }
+
+    function moveField(index, direction) {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`));
+      const newIndex = index + direction;
+      
+      if (newIndex >= 0 && newIndex < fields.length) {
+        const temp = fields[index];
+        fields[index] = fields[newIndex];
+        fields[newIndex] = temp;
+        localStorage.setItem(`formFields_${formType}`, JSON.stringify(fields));
+        showFormCustomization();
+      }
+    }
+
+    function addFieldOption(fieldIndex) {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`));
+      fields[fieldIndex].options.push('New Option');
+      localStorage.setItem(`formFields_${formType}`, JSON.stringify(fields));
+      showFormCustomization();
+    }
+
+    function removeFieldOption(fieldIndex, optionIndex) {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`));
+      fields[fieldIndex].options.splice(optionIndex, 1);
+      localStorage.setItem(`formFields_${formType}`, JSON.stringify(fields));
+      showFormCustomization();
+    }
+
+    function updateFieldOption(fieldIndex, optionIndex, value) {
+      const formType = document.getElementById('formTypeSelect').value;
+      const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`));
+      fields[fieldIndex].options[optionIndex] = value;
+      localStorage.setItem(`formFields_${formType}`, JSON.stringify(fields));
+    }
+
+    function resetToDefault() {
+      if (confirm('Are you sure you want to reset all forms to their default state? This cannot be undone.')) {
+        const formType = document.getElementById('formTypeSelect').value;
+        localStorage.setItem(`formFields_${formType}`, JSON.stringify(defaultFormFields[formType]));
+        showFormCustomization();
+      }
+    }
+
+    function selectFormType(type) {
+      // Update selected state
+      document.querySelectorAll('.form-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+
+      // Show/hide customization options
+      const customFields = document.getElementById('customFormFields');
+      customFields.style.display = type === 'custom' ? 'block' : 'none';
+
+      // Save preference
+      localStorage.setItem('formType', type);
+    }
+
+    // Add new form management functions
+    function createNewForm() {
+      const formName = document.getElementById('newFormName').value.trim();
+      const formDescription = document.getElementById('newFormDescription').value.trim();
+      
+      if (!formName) {
+        alert('Please enter a form name');
+        return;
+      }
+
+      const formId = formName.toLowerCase().replace(/\s+/g, '_');
+      const newForm = {
+        id: formId,
+        name: formName,
+        description: formDescription,
+        fields: []
+      };
+
+      // Get existing forms or initialize empty array
+      const forms = JSON.parse(localStorage.getItem('customForms') || '[]');
+      forms.push(newForm);
+      localStorage.setItem('customForms', JSON.stringify(forms));
+
+      // Add new form to selector
+      const formTypeSelect = document.getElementById('formTypeSelect');
+      const option = document.createElement('option');
+      option.value = formId;
+      option.textContent = formName;
+      formTypeSelect.appendChild(option);
+
+      // Clear inputs
+      document.getElementById('newFormName').value = '';
+      document.getElementById('newFormDescription').value = '';
+
+      // Select the new form
+      formTypeSelect.value = formId;
+      showFormCustomization();
+    }
+
+    // Update form selector to include custom forms
+    function updateFormSelector() {
+      const formTypeSelect = document.getElementById('formTypeSelect');
+      const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+      
+      // Remove existing custom forms
+      Array.from(formTypeSelect.options).forEach(option => {
+        if (option.value.startsWith('custom_')) {
+          option.remove();
+        }
+      });
+
+      // Add custom forms
+      customForms.forEach(form => {
+        const option = document.createElement('option');
+        option.value = form.id;
+        option.textContent = form.name;
+        formTypeSelect.appendChild(option);
+      });
+    }
+
+    // Update saveFormCustomization to handle custom forms
+    function saveFormCustomization() {
+      const formType = document.getElementById('formTypeSelect').value;
+      
+      if (formType.startsWith('custom_')) {
+        const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+        const formIndex = customForms.findIndex(f => f.id === formType);
+        if (formIndex !== -1) {
+          const fields = JSON.parse(localStorage.getItem(`formFields_${formType}`)) || [];
+          customForms[formIndex].fields = fields;
+          localStorage.setItem('customForms', JSON.stringify(customForms));
+        }
+      }
+      
+      window.location.reload();
+    }
+
+    // Add new form management functions
+    function toggleNewFormInput() {
+      const input = document.getElementById('newFormInput');
+      input.classList.toggle('active');
+    }
+
+    function cancelNewForm() {
+      const input = document.getElementById('newFormInput');
+      input.classList.remove('active');
+      document.getElementById('newFormName').value = '';
+    }
+
+    function createNewFormFromInput() {
+      const formName = document.getElementById('newFormName').value.trim();
+      if (formName) {
+        createNewForm(formName);
+        cancelNewForm();
+      }
+    }
+
+    function deleteForm(formId) {
+      if (confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
+        const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+        const updatedForms = customForms.filter(form => form.id !== formId);
+        localStorage.setItem('customForms', JSON.stringify(updatedForms));
+        
+        // Remove form from selector
+        const formTypeSelect = document.getElementById('formTypeSelect');
+        const option = formTypeSelect.querySelector(`option[value="${formId}"]`);
+        if (option) {
+          option.remove();
+        }
+        
+        // Update form list
+        updateFormList();
+      }
+    }
+
+    function editForm(formId) {
+      const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+      const form = customForms.find(f => f.id === formId);
+      if (form) {
+        document.getElementById('formTypeSelect').value = formId;
+        showFormCustomization();
+      }
+    }
+
+    function updateFormList() {
+      const formList = document.getElementById('formList');
+      const customForms = JSON.parse(localStorage.getItem('customForms') || '[]');
+      
+      formList.innerHTML = customForms.map(form => `
+        <div class="form-list-item">
+          <span>${form.name}</span>
+          <div>
+            <button onclick="editForm('${form.id}')" class="edit-form-btn">Edit</button>
+            <button onclick="deleteForm('${form.id}')" class="delete-form-btn">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update createNewForm function
+    function createNewForm(formName) {
+      const formId = formName.toLowerCase().replace(/\s+/g, '_');
+      const newForm = {
+        id: formId,
+        name: formName,
+        fields: []
+      };
+
+      const forms = JSON.parse(localStorage.getItem('customForms') || '[]');
+      forms.push(newForm);
+      localStorage.setItem('customForms', JSON.stringify(forms));
+
+      // Add new form to selector
+      const formTypeSelect = document.getElementById('formTypeSelect');
+      const option = document.createElement('option');
+      option.value = formId;
+      option.textContent = formName;
+      formTypeSelect.appendChild(option);
+
+      // Update form list
+      updateFormList();
+
+      // Select the new form
+      formTypeSelect.value = formId;
+      showFormCustomization();
+    }
+
+    function handleGoogleLogin() {
+      // Redirect to welcome page after login
+      window.location.href = 'welcome.html';
+    }
+
+    // Show login prompt when Easy Tracking is clicked
+    document.querySelector('.easy-tracking').addEventListener('click', function() {
+      document.getElementById('loginPrompt').classList.add('active');
+    });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+    themeToggle.onclick = () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    };
+    setTheme(localStorage.getItem('theme') || 'light');
+  </script>
+</body>
+</html>

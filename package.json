@@ -1,0 +1,106 @@
+{
+  "name": "blood-glucose-tracker",
+  "version": "1.0.6",
+  "description": "Smart Diabetes Management Application (Electron + React Native)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder -w",
+    "build:windows": "electron-builder --windows",
+    "build:store": "electron-builder --win --x64 --publish always",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:mobile": "capacitor build",
+    "build:ios": "capacitor build ios",
+    "build:android": "capacitor build android",
+    "rn:start": "cd rn && react-native start"
+  },
+  "author": "Glucolink",
+  "license": "ISC",
+  "devDependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/cli": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/ios": "^5.0.0",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "react-native": "0.72.6"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-navigation/bottom-tabs": "^7.3.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.13",
+    "expo-auth-session": "^6.1.5",
+    "expo-file-system": "^18.1.10",
+    "expo-font": "^13.3.1",
+    "expo-notifications": "^0.31.2",
+    "expo-sharing": "^13.1.5",
+    "expo-web-browser": "^14.1.6",
+    "metro": "^0.82.3"
+  },
+  "build": {
+    "appId": "com.glucolink.app",
+    "productName": "GlucoLink",
+    "mac": {
+      "category": "public.app-category.healthcare-fitness",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "darkModeSupport": true
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./assets/logo.ico",
+      "artifactName": "GlucoLink-Setup-${version}.exe",
+      "publisherName": "GlucoLink",
+      "verifyUpdateCodeSignature": false,
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "GlucoLink",
+      "installerIcon": "./assets/logo.ico",
+      "uninstallerIcon": "./assets/logo.ico",
+      "installerHeaderIcon": "./assets/logo.ico",
+      "menuCategory": true,
+      "perMachine": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "category": "Medical"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "glucose_tracker.html",
+      "glucose_viewer.html",
+      "glucose_tracker.js",
+      "glucose_viewer.js",
+      "capacitor.config.json",
+      "package.json",
+      "build/**/*",
+      "assets/**/*",
+      "app-home.html"
+    ],
+    "extraFiles": []
+  }
+}

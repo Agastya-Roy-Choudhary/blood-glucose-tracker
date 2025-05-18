@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Blood Glucose Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-light: #f0f2f5;
+      --text-dark: #202124;
+      --text-light: #5f6368;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    [data-theme="dark"] {
+      --primary: #64b5f6;
+      --primary-dark: #42a5f5;
+      --bg-light: #1a1a1a;
+      --text-dark: #ffffff;
+      --text-light: #e0e0e0;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --bg-color: #121212;
+      --form-bg: #1e1e1e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--text-dark);
+    }
+
+    .dev-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #ff9800;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: 500;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: var(--form-bg);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: var(--shadow-md);
+      margin-top: 50px; /* Add space for the banner */
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: var(--text-light);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--text-light);
+      border-radius: 8px;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-size: 1rem;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .form-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: var(--text-light);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--text-light);
+    }
+
+    .divider span {
+      padding: 0 10px;
+    }
+
+    .social-login {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .google-btn {
+      background: white;
+      color: #757575;
+      border: 1px solid #dadce0;
+    }
+
+    .google-btn:hover {
+      background: #f8f9fa;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .error-message {
+      color: #f44336;
+      margin-top: 5px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dev-banner">
+    🚧 This website is under development. Some features may not work correctly. 🚧
+  </div>
+
+  <a href="index.html" class="back-btn">Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+  <div class="container">
+    <div class="header">
+      <h1>Login</h1>
+      <p>Sign in to your Blood Glucose Tracker account</p>
+    </div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+        <div id="email-error" class="error-message">Please enter a valid email address</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+        <div id="password-error" class="error-message">Password is required</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+
+    <div class="form-footer">
+      <a href="#" onclick="showForgotPassword()">Forgot password?</a>
+    </div>
+
+    <div class="divider">
+      <span>or</span>
+    </div>
+
+    <div class="social-login">
+      <button class="social-btn google-btn" onclick="handleGoogleLogin()">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+        </svg>
+        Google
+      </button>
+    </div>
+
+    <div class="form-footer" style="margin-top: 30px;">
+      Don't have an account? <a href="#" onclick="showSignup()">Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // Here you would typically make an API call to your backend
+      // For now, we'll simulate a successful login
+      console.log('Login attempt:', { email, password });
+
+      // Check if we came from the download page
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromDownload = urlParams.get('from') === 'download';
+
+      if (fromDownload) {
+        // Redirect to download page after successful login
+        window.location.href = 'download.html?install=true';
+      } else {
+        // Redirect to the main app page
+        window.location.href = 'glucose_tracker.html';
+      }
+    }
+
+    function handleGoogleLogin() {
+      // Here you would typically implement Google OAuth
+      // For now, we'll simulate a successful login
+      console.log('Google login attempt');
+
+      // Check if we came from the download page
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromDownload = urlParams.get('from') === 'download';
+
+      if (fromDownload) {
+        // Redirect to download page after successful login
+        window.location.href = 'download.html?install=true';
+      } else {
+        // Redirect to the main app page
+        window.location.href = 'glucose_tracker.html';
+      }
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.body.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.setAttribute('data-theme', savedTheme);
+      
+      // Check if user is already logged in
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const isVerified = localStorage.getItem('emailVerified') === 'true';
+      
+      if (isLoggedIn && isVerified) {
+        window.location.href = 'welcome.html';
+      }
+    });
+
+    function showForgotPassword() {
+      alert('Password reset functionality would be implemented here.');
+    }
+
+    function showSignup() {
+      window.location.href = 'signup.html';
+    }
+  </script>
+</body>
+</html> 

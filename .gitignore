@@ -1,0 +1,11 @@
+dist/*
+!dist/GlucoLink-Setup-1.0.6.exe
+!dist/GlucoLink-Setup-1.0.6.exe.blockmap
+!dist/latest.yml
+!dist/builder-debug.yml
+!dist/builder-effective-config.yaml
+*.mp4
+*.zip
+*.msi
+node_modules
+dist/win-unpacked/
